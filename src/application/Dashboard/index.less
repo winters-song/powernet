@@ -1,3 +1,83 @@
-h1{
-  background-color: #09f;
+@header-height: 80px;
+@sidebar-width: 300px;
+
+#dashboard{
+  position: absolute;
+  inset: 0;
+  background-color: #000;
+}
+
+
+#header{
+  position: absolute;
+  left: 0;
+  top:0;
+  right:0;
+  height: 80px;
+  border-bottom: 1px solid #333;
+
+  .logo{
+    width: 230px;
+    position: absolute;
+    left: 20px;
+    top: 10px
+  }
+
+  .filters{
+    position: absolute;
+    left: 300px;
+    top: 30px;
+    width: 600px;
+
+    .ant-dropdown-link{
+      padding: 1em;
+      font-size: 1.2em;
+      color: #fff;
+    }
+  }
+
+  .navigation{
+    float: right;
+    color: #fff;
+    list-style: none;
+    margin: 10px 50px 0;
+
+    li{
+      float: left;
+      padding: 1em;
+      font-size: 1.3em;
+      font-weight: 700;
+      cursor: pointer;
+
+      &.active{
+        border-bottom: 5px solid #09f;
+      }
+    }
+  }
+}
+
+
+.main{
+  position: absolute;
+  top: @header-height;
+  left: 0;
+  right: 0;
+  bottom :0;
+}
+
+.sidebar{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: @sidebar-width;
+  display: flex;
+  flex-direction: column;
+  
+  &.sidebar-left{
+    left: 0;
+  }
+  &.sidebar-right{
+    right: 0;
+  }
+
 }

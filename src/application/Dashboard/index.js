@@ -1,10 +1,27 @@
 import React, {Component} from 'react'
 import './index.less'
+import Header from '../../components/common/Header'
+import Panel from '../../components/common/Panel'
 
 export default class Dashboard extends Component {
   render() {
     return (
-      <h1>Hello WOrld</h1>
+      <div id="dashboard">
+        <Header />
+
+        <div className="main">
+          <div className="sidebar sidebar-left">
+            <Panel chartType="pie" />
+            <Panel />
+          </div>
+          <div className="center">
+
+          </div>
+          <div className="sidebar sidebar-right">
+            <Panel />
+          </div>
+        </div>
+      </div>
     )
   }
 }
