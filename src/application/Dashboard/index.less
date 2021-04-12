@@ -1,10 +1,13 @@
 @header-height: 80px;
-@sidebar-width: 400px;
+@sidebar-width: 300px;
 
 #dashboard{
   position: absolute;
   inset: 0;
   background-color: #000;
+
+  background: radial-gradient(circle at 2.03% 87.96%, rgb(0, 0, 0), transparent 100%), radial-gradient(circle at 97.97% 61.97%, rgb(83, 52, 109), transparent 100%), radial-gradient(circle at 50% 50%, rgb(33, 48, 255), rgb(33, 48, 255) 100%);
+  
 }
 
 
@@ -14,7 +17,7 @@
   top:0;
   right:0;
   height: 80px;
-  border-bottom: 1px solid #333;
+  // border-bottom: 1px solid #333;
 
   .logo{
     width: 230px;
@@ -63,6 +66,14 @@
   left: 0;
   right: 0;
   bottom :0;
+
+  .center{
+    position: absolute;
+    left: @sidebar-width;
+    right: @sidebar-width;
+    top: 0;
+    bottom:0;
+  }
 }
 
 .sidebar{

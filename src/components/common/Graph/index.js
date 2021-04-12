@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
 import './index.less'
-import PieChart from '../../chart/PieChart'
-import HBarChart from '../../chart/HBarChart'
+import ChinaMap from '../../graph/ChinaMap'
 import * as chartData from '../../../assets/mock/chartData'
+
 export default class Panel extends Component {
 
   constructor(props){
@@ -13,12 +13,14 @@ export default class Panel extends Component {
 
   componentDidMount() {
     let {chartType} = this.props
-    if(chartType == 'pie'){
-      this.chart = new PieChart(this.chartRef.current)
-    }
-    if(chartType == 'hbar'){
-      this.chart = new HBarChart(this.chartRef.current)
-    }
+
+    this.chart = new ChinaMap(this.chartRef.current)
+    // if(chartType == 'pie'){
+    //   this.chart = new PieChart(this.chartRef.current)
+    // }
+    // if(chartType == 'hbar'){
+    //   this.chart = new HBarChart(this.chartRef.current)
+    // }
     this.updateChart(this.chart, chartType)
   }
 
@@ -29,17 +31,18 @@ export default class Panel extends Component {
     }
 
     function update() {
-      let data = []
-      if(type == 'pie'){
-        data = chartData.getPieData()
-      }else if(type == 'hbar'){
-        data = chartData.getPieData()
-      }
+      // let data = []
+      // if(type == 'pie'){
+      //   data = chartData.getPieData()
+      // }else if(type == 'hbar'){
+      //   data = chartData.getPieData()
+      // }
+      let data = chartData.getMapData()
       chart.render(data)
     }
-    setInterval(() => {
-      update()
-    },2000)
+    // setInterval(() => {
+    //   update()
+    // },2000)
     update()
   }
 
@@ -48,9 +51,9 @@ export default class Panel extends Component {
     const style = Object.assign({}, this.props.style ||{})
 
     return (
-      <div className="panel" style={style}>
+      <div className="graph" style={style}>
         <header>
-          <div className="title">Chart Name</div>
+          <div className="title"></div>
         </header>
         <main ref={this.chartRef}>
 

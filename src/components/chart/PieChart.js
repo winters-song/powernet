@@ -95,7 +95,7 @@ export default class PieChart extends EventEmitter{
     const arcs = this.pie(data);
 
     const color = d3.scaleOrdinal()
-      .domain(data.map(d => d.name))
+      .domain(data.map(d => d.id))
       .range(d3.quantize(t => d3.interpolateSpectral(t * 0.8 + 0.1), data.length).reverse())
 
     const t = this.svg.transition().duration(this.animDuration);
@@ -105,7 +105,7 @@ export default class PieChart extends EventEmitter{
       .data(arcs, d => d.data.id)
       .join("path")
       .attr("class", "pie")
-      .attr("fill", d => color(d.data.name))
+      .attr("fill", d => color(d.data.id))
       .attr("d", this.arc)
       // .call(el => el.transition(t)
       //   .attr("d", this.arc)

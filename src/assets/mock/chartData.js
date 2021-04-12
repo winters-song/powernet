@@ -28,3 +28,13 @@ export function getPieData () {
 
   return newArr
 }
+
+export function getMapData () {
+  return {
+    nodes: [{ id: 1, name: '北京', value: 200, pos: [116.4, 40]}, 
+        { id: 2, name: '重庆', value: 80, pos: [117, 29]},
+        { id: 3, name: '上海', value: 150, pos: [121,31]},
+       { id: 4, name: '沈阳', value: 100, pos: [123,41]}],
+    links: [{from: 1, to: 2}, {from: 1, to: 3}, {from: 1, to: 4}]
+  }
+}

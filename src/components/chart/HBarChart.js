@@ -9,7 +9,12 @@ export default class HBarChart extends EventEmitter{
     Object.assign(this, {
       width : this.el.offsetWidth,
       height : this.el.offsetHeight,
-      margin : 30,
+      margin: {
+        left: 40,
+        top: 20,
+        right: 10,
+        bottom: 10
+      },
       animDuration: 500,
       inited: false
     })
@@ -39,6 +44,15 @@ export default class HBarChart extends EventEmitter{
     this.axisXGroup = this.svg.append("g")
     this.axisYGroup = this.svg.append("g")
 
+    this.barGroup = this.svg.append("g")
+      .attr("fill", "steelblue")
+
+    this.textGroup = this.svg.append("g")
+      // .attr("fill", "white")
+      .attr("text-anchor", "end")
+      .attr("font-family", "sans-serif")
+      .attr("font-size", 12)
+
     const node = this.svg.node();
     this.el.appendChild(node)
     this.inited = true
@@ -51,29 +65,65 @@ export default class HBarChart extends EventEmitter{
     //降序排列
     data = d3.sort(data, (a, b) => d3.descending(a.value, b.value))
 
+    const color = d3.scaleOrdinal()
+      .domain(data.map(d => d.id))
+      .range(d3.quantize(t => d3.interpolateSpectral(t * 0.8 + 0.1), data.length).reverse())
+
+
+    const t = this.svg.transition().duration(this.animDuration);
 
     const x = d3.scaleLinear()
       .domain([0, d3.max(data, d => d.value)])
-      .range([margin, width - margin])
+      .range([margin.left, width - margin.right])
 
     const y = d3.scaleBand()
       .domain(d3.range(data.length))
-      .rangeRound([margin, height - margin])
+      .rangeRound([margin.top, height - margin.bottom])
       .padding(0.1)
 
     const xAxis = g => g
       .attr("class", "axis")
-      .attr("transform", `translate(0,${margin})`)
+      .attr("transform", `translate(0,${margin.top})`)
       .call(d3.axisTop(x).ticks(width / 80))
       .call(g => g.select(".domain").remove())
 
     const yAxis = g => g
       .attr("class", "axis")
-      .attr("transform", `translate(${this.margin},0)`)
+      .attr("transform", `translate(${this.margin.left},0)`)
       .call(d3.axisLeft(y).tickFormat(i => data[i].name).tickSizeOuter(0))
 
 
-    // const t = this.svg.transition().duration(this.animDuration);
+    this.barGroup
+      .selectAll("rect")
+      .data(data)
+      .join("rect")
+      .call(el => el.transition(t)
+        .attr("fill", d => color(d.id)) 
+        .attr("x", x(0))
+        .attr("y", (d, i) => y(i))
+        .attr("width", d => x(d.value) - x(0))
+        .attr("height", y.bandwidth())
+      )
+        // .attr("x", x(0))
+        // .attr("y", (d, i) => y(i))
+        // .attr("width", d => x(d.value) - x(0))
+        // .attr("height", y.bandwidth());
+    
+    this.textGroup
+      .selectAll("text")
+      .data(data)
+      .join("text")
+        .attr("x", d => x(d.value))
+        .attr("y", (d, i) => y(i) + y.bandwidth() / 2)
+        .attr("dy", "0.35em")
+        .attr("dx", -4)
+        .text(d => d.value)
+        .attr("fill", "black")
+      .call(text => text.filter(d => x(d.value) - x(0) < 20) // short bars
+        .attr("dx", +8)
+        .attr("fill", "white")
+      )
+        // .attr("text-anchor", "start"));
 
 
     this.axisXGroup.call(xAxis);
