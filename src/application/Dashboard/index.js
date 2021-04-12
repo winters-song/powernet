@@ -7,18 +7,18 @@ export default class Dashboard extends Component {
   render() {
     return (
       <div id="dashboard">
-        <Header />
+        {/*<Header />*/}
 
         <div className="main">
           <div className="sidebar sidebar-left">
-            <Panel chartType="pie" />
-            <Panel />
+            <Panel chartType="hbar" />
+            <Panel  />
           </div>
           <div className="center">
 
           </div>
           <div className="sidebar sidebar-right">
-            <Panel />
+            <Panel style={{opacity: 0}} />
           </div>
         </div>
       </div>

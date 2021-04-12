@@ -6,106 +6,150 @@ export default class PieChart extends EventEmitter{
     super()
     this.el = el
 
-    this.width = this.el.offsetWidth
-    this.height = this.el.offsetHeight
+    Object.assign(this, {
+      width : this.el.offsetWidth,
+      height : this.el.offsetHeight,
+      margin : 15,
+      animDuration: 500,
+      inited: false
+    })
 
     window.addEventListener('resize', () => {
       this.resizeTimer && clearTimeout(this.resizeTimer)
       this.resizeTimer = setTimeout(() => {
         this.resize()
-      }, 400)
+      }, 100)
     })
-  }
 
-  getData() {
-    return [{
-      name: '北京', value: 20
-    },{
-      name: '四川', value: 20
-    },{
-      name: '新疆', value: 20
-    },{
-      name: '湖北', value: 20
-    },{
-      name: '上海', value: 20
-    }]
+    this.init()
   }
 
   resize() {
+    if(!this.inited){
+      return
+    }
     let width = this.el.offsetWidth
     let height = this.el.offsetHeight
     if(width == this.width && height == this.height){
       return
-    } 
+    }
     this.width = width
     this.height = height
 
+    this.initParams()
+
+    const t = this.svg.transition().duration(this.animDuration);
+
+    this.pathGroup
+      .selectAll("path")
+      // .attr("d", this.arc)
+      .call(el => el.transition(t)
+        .attr("d", this.arc)
+      )
+
+    this.textGroup
+      .selectAll("text")
+      // .attr("transform", d => `translate(${this.arcLabel.centroid(d)})`)
+      .call(el => el.transition(t)
+        .attr("transform", d => `translate(${this.arcLabel.centroid(d)})`)
+      )
+  }
+
+  initParams() {
+    let {width, height, margin} = this
+
     this.svg.attr("viewBox", [-width / 2, -height / 2, width, height]);
 
-    const arc = d3.arc()
-    .innerRadius(0)
-    .outerRadius(Math.min(width, height) / 2 - 1)
-
-    this.svg.selectAll(".pie").attr("d", arc)
-
+    const radius = Math.min(width, height) / 2 - margin
+    const labelRadius = radius * 0.7
+    // pie的path路径
+    this.arc = d3.arc()
+      .innerRadius(0)
+      .outerRadius(radius)
+    this.arcLabel = d3.arc().innerRadius(labelRadius).outerRadius(labelRadius);
   }
 
   init(){
-    let {width, height} = this
-    let pie = d3.pie()
+    this.svg = d3.create("svg")
+    this.initParams()
+
+    this.pie = d3.pie()
       .sort(null)
       .value(d => d.value)
 
-    const data = this.getData()
+    this.pathGroup = this.svg.append("g")
+      .attr("stroke", "white")
 
-    const arcs = pie(data);
+    this.textGroup = this.svg.append("g")
+      .attr("font-family", "sans-serif")
+      .attr("font-size", 12)
+      .attr("text-anchor", "middle")
 
-    const svg = d3.create("svg")
-      .attr("viewBox", [-width / 2, -height / 2, width, height]);
-    this.svg = svg
+    const node = this.svg.node();
+    this.el.appendChild(node)
+    this.inited = true
+  }
 
-    // pie的path路径
-    const arc = d3.arc()
-    .innerRadius(0)
-    .outerRadius(Math.min(width, height) / 2 - 1)
-
-    const radius = Math.min(width, height) / 2 * 0.8;
-    const arcLabel = d3.arc().innerRadius(radius).outerRadius(radius);
+  render(data) {
+    let me = this
+    const arcs = this.pie(data);
 
     const color = d3.scaleOrdinal()
       .domain(data.map(d => d.name))
       .range(d3.quantize(t => d3.interpolateSpectral(t * 0.8 + 0.1), data.length).reverse())
 
-    svg.append("g")
-      .attr("stroke", "white")
-      .selectAll("path")
-      .data(arcs)
-      .join("path")
-        .attr("class", "pie")
-        .attr("fill", d => color(d.data.name))
-        .attr("d", arc)
-      .append("title")
-        .text(d => `${d.data.name}: ${d.data.value}`);
+    const t = this.svg.transition().duration(this.animDuration);
 
-    svg.append("g")
-      .attr("font-family", "sans-serif")
-      .attr("font-size", 12)
-      .attr("text-anchor", "middle")
+    this.pathGroup
+      .selectAll("path")
+      .data(arcs, d => d.data.id)
+      .join("path")
+      .attr("class", "pie")
+      .attr("fill", d => color(d.data.name))
+      .attr("d", this.arc)
+      // .call(el => el.transition(t)
+      //   .attr("d", this.arc)
+      // )
+      .each( function(d) {
+        const node = d3.select(this)
+        let title = node.select("title")
+        if(!title.node()){
+          title = node.append("title")
+        }
+        title.text(d => `${d.data.name}: ${d.data.value}`);
+      })
+
+
+    this.textGroup
       .selectAll("text")
-      .data(arcs)
+      .data(arcs, d => d.data.id)
       .join("text")
-        .attr("transform", d => `translate(${arcLabel.centroid(d)})`)
-        .call(text => text.append("tspan")
-            .attr("y", "-0.4em")
-            .attr("font-weight", "bold")
-            .text(d => d.data.name))
-        .call(text => text.filter(d => (d.endAngle - d.startAngle) > 0.25).append("tspan")
-            .attr("x", 0)
+      .call(el => el.transition(t)
+        .attr("transform", d => `translate(${this.arcLabel.centroid(d)})`)
+      )
+      // .attr("transform", d => `translate(${this.arcLabel.centroid(d)})`)
+      .each(function(d) {
+        const node = d3.select(this)
+        let nameEl = node.select("tspan.name")
+        if(!nameEl.node()){
+          nameEl = node.append("tspan").attr('class', 'name')
+        }
+        nameEl
+          .attr("y", "-0.4em")
+          .attr("font-weight", "bold")
+          .text(d => d.data.name)
+
+        if(d.endAngle - d.startAngle > 0.25) {
+          let labelEl = node.select("tspan.label")
+          if(!labelEl.node()) {
+            labelEl = node.append("tspan").attr('class', 'label')
+          }
+          labelEl.attr("x", 0)
             .attr("y", "0.7em")
             .attr("fill-opacity", 0.7)
-            .text(d => d.data.value));
+            .text(d => d.data.value);
+        }
+      })
 
-      const node = svg.node();
-      this.el.appendChild(node)
   }
 }
