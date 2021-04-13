@@ -16,17 +16,49 @@ export function getPieData () {
   }]
 
   let newArr = []
-  let total = 0
 
   arr.forEach(item => {
     if(Math.random() < 0.8){
       let value = Math.floor(Math.random() * 100) + 1
       newArr.push(Object.assign({}, item, {value}))
-      total+=value
     }
   })
 
   return newArr
+}
+
+export function getStackBarData() {
+  const arr = [{
+    id: 1, name: '北京', fire: 20, wind: 20, water: 20, nuclear: 20, light: 20
+  },{
+    id: 2, name: '四川', fire: 20, wind: 20, water: 20, nuclear: 20, light: 20
+  },{
+    id: 3, name: '新疆', fire: 20, wind: 20, water: 20, nuclear: 20, light: 20
+  },{
+    id: 4, name: '湖北', fire: 20, wind: 20, water: 20, nuclear: 20, light: 20
+  },{
+    id: 5, name: '上海', fire: 20, wind: 20, water: 20, nuclear: 20, light: 20
+  },{
+    id: 6, name: '河北', fire: 20, wind: 20, water: 20, nuclear: 20, light: 20
+  }]
+
+  let newArr = []
+
+  arr.forEach(item => {
+    newArr.push(Object.assign({}, item, {
+      fire: Math.floor(Math.random() * 100) + 1,
+      wind: Math.floor(Math.random() * 100) + 1,
+      water: Math.floor(Math.random() * 100) + 1,
+      nuclear: Math.floor(Math.random() * 100) + 1,
+      light: Math.floor(Math.random() * 100) + 1,
+    }))
+  })
+
+  newArr.columns = ['fire', 'wind', 'water', 'nuclear', 'light']
+  newArr.columns_zh = ['火电', '风电', '水电', '核电', '光电']
+
+  return newArr
+
 }
 
 export function getMapData () {

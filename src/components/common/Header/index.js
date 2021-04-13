@@ -33,21 +33,21 @@ export default class Header extends Component {
 
         <div className="filters">
           <Dropdown overlay={menu}>
-            <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+            <div className="ant-dropdown-link"  onClick={e => e.preventDefault()}>
               空间选项 <DownOutlined />
-            </a>
+            </div>
           </Dropdown>
 
           <Dropdown overlay={menu}>
-            <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+            <div className="ant-dropdown-link"  onClick={e => e.preventDefault()}>
               时间选项 <DownOutlined />
-            </a>
+            </div>
           </Dropdown>
 
           <Dropdown overlay={menu}>
-            <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+            <div className="ant-dropdown-link"  onClick={e => e.preventDefault()}>
               展示选项 <DownOutlined />
-            </a>
+            </div>
           </Dropdown>
         </div>
 

@@ -11,7 +11,7 @@ export default class PieChart extends EventEmitter{
       height : this.el.offsetHeight,
       margin : 15,
       animDuration: 500,
-      inited: false
+      initialized: false
     })
 
     window.addEventListener('resize', () => {
@@ -25,12 +25,12 @@ export default class PieChart extends EventEmitter{
   }
 
   resize() {
-    if(!this.inited){
+    if(!this.initialized){
       return
     }
     let width = this.el.offsetWidth
     let height = this.el.offsetHeight
-    if(width == this.width && height == this.height){
+    if(width === this.width && height === this.height){
       return
     }
     this.width = width
@@ -87,11 +87,10 @@ export default class PieChart extends EventEmitter{
 
     const node = this.svg.node();
     this.el.appendChild(node)
-    this.inited = true
+    this.initialized = true
   }
 
   render(data) {
-    let me = this
     const arcs = this.pie(data);
 
     const color = d3.scaleOrdinal()
